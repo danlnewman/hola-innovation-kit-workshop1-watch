@@ -43,7 +43,7 @@ void loop() {
 
 }
 ```
-## 6. Change text to a time
+## 7. Change text to a time
 ```C
 #include <M5StickC.h>
 
@@ -59,5 +59,177 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
+}
+```
+## 8. Make text bigger
+```C
+#include <M5StickC.h>
+
+void setup() {
+  // put your setup code here, to run once:
+  M5.begin();
+  M5.Lcd.setRotation(3);
+  M5.Lcd.fillScreen(BLACK);
+  
+  M5.Lcd.setTextSize(3);
+  
+  M5.Lcd.printf("12:55:00");
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}
+```
+## 9. Center text
+```C
+#include <M5StickC.h>
+
+void setup() {
+  // put your setup code here, to run once:
+  M5.begin();
+  M5.Lcd.setRotation(3);
+  M5.Lcd.fillScreen(BLACK);
+  
+  M5.Lcd.setTextSize(3);
+  
+  M5.Lcd.setCursor(6, 30);
+  
+  M5.Lcd.printf("12:55:00");
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}
+```
+## 10. Get time from Real Time Clock (RTC)
+```C
+#include <M5StickC.h>
+
+RTC_TimeTypeDef RTC_TimeStruct;
+
+void setup() {
+  // put your setup code here, to run once:
+  M5.begin();
+  M5.Lcd.setRotation(3);
+  M5.Lcd.fillScreen(BLACK);
+
+  M5.Lcd.setTextSize(3);
+  
+  // Set inital time
+  RTC_TimeTypeDef TimeStruct;
+  TimeStruct.Hours   = 12;
+  TimeStruct.Minutes = 55;
+  TimeStruct.Seconds = 0;
+  M5.Rtc.SetTime(&TimeStruct);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  M5.Lcd.setCursor(6, 30);
+  
+  M5.Rtc.GetTime(&RTC_TimeStruct);
+  M5.Lcd.setCursor(6, 30);
+  M5.Lcd.printf("%02d:%02d:%02d\n",RTC_TimeStruct.Hours, RTC_TimeStruct.Minutes, RTC_TimeStruct.Seconds);
+
+  delay(500);
+}
+```
+## 11. Use right button to update hour  
+```C
+#include <M5StickC.h>
+
+RTC_TimeTypeDef RTC_TimeStruct;
+
+void setup() {
+  // put your setup code here, to run once:
+  M5.begin();
+  M5.Lcd.setRotation(3);
+  M5.Lcd.fillScreen(BLACK);
+
+  M5.Lcd.setTextSize(3);
+  
+  // Set inital time
+  RTC_TimeTypeDef TimeStruct;
+  TimeStruct.Hours   = 12;
+  TimeStruct.Minutes = 55;
+  TimeStruct.Seconds = 0;
+  M5.Rtc.SetTime(&TimeStruct);
+
+  pinMode(M5_BUTTON_RST, INPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  if(digitalRead(M5_BUTTON_RST) == LOW)
+  {
+    RTC_TimeStruct.Seconds = 0;
+    RTC_TimeStruct.Hours = (RTC_TimeStruct.Hours + 1)%24;
+    M5.Rtc.SetTime(&RTC_TimeStruct);
+  }
+  
+  M5.Lcd.setCursor(6, 30);
+  
+  M5.Rtc.GetTime(&RTC_TimeStruct);
+  M5.Lcd.setCursor(6, 30);
+  M5.Lcd.printf("%02d:%02d:%02d\n",RTC_TimeStruct.Hours, RTC_TimeStruct.Minutes, RTC_TimeStruct.Seconds);
+
+  delay(500);
+}
+```
+## 12. Use home button to update minutes
+```C
+#include <M5StickC.h>
+
+RTC_TimeTypeDef RTC_TimeStruct;
+
+void setup() {
+  // put your setup code here, to run once:
+  M5.begin();
+  M5.Lcd.setRotation(3);
+  M5.Lcd.fillScreen(BLACK);
+
+  M5.Lcd.setTextSize(3);
+  
+  // Set inital time
+  RTC_TimeTypeDef TimeStruct;
+  TimeStruct.Hours   = 12;
+  TimeStruct.Minutes = 55;
+  TimeStruct.Seconds = 0;
+  M5.Rtc.SetTime(&TimeStruct);
+
+  pinMode(M5_BUTTON_RST, INPUT);
+  pinMode(M5_BUTTON_HOME, INPUT);
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  if(digitalRead(M5_BUTTON_RST) == LOW)
+  {
+    RTC_TimeStruct.Seconds = 0;
+    RTC_TimeStruct.Hours = (RTC_TimeStruct.Hours + 1)%24;
+    M5.Rtc.SetTime(&RTC_TimeStruct);
+  }
+  if(digitalRead(M5_BUTTON_HOME) == LOW)
+  {
+    RTC_TimeStruct.Minutes++;
+    RTC_TimeStruct.Seconds = 0;
+    if ( RTC_TimeStruct.Minutes >= 60 )
+    {
+      RTC_TimeStruct.Minutes = 0;
+      RTC_TimeStruct.Hours = (RTC_TimeStruct.Hours + 1)%24;
+    }
+    
+    M5.Rtc.SetTime(&RTC_TimeStruct);
+  }
+  M5.Lcd.setCursor(6, 30);
+  
+  M5.Rtc.GetTime(&RTC_TimeStruct);
+  M5.Lcd.setCursor(6, 30);
+  M5.Lcd.printf("%02d:%02d:%02d\n",RTC_TimeStruct.Hours, RTC_TimeStruct.Minutes, RTC_TimeStruct.Seconds);
+
+  delay(500);
 }
 ```
